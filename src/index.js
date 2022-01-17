@@ -1,17 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+// import { configureStore } from "@reduxjs/toolkit";
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "react-redux";
+// import { applyMiddleware, createStore } from "redux";
+import { createLogger } from "redux-logger";
+import App from "./App";
+import ReduxThunk from "redux-thunk";
+import rootReducer, { rootSaga } from "./modules/index.js";
+import { configureStore } from "@reduxjs/toolkit";
+import createSagaMiddleware from "@redux-saga/core";
+
+const logger = createLogger();
+const sagaMiddleware = createSagaMiddleware();
+
+const store = configureStore({
+  reducer: rootReducer,
+  middleware: [logger, ReduxThunk, sagaMiddleware],
+});
+sagaMiddleware.run(rootSaga);
+
+// const store = createStore(rootReducer, applyMiddleware(logger, ReduxThunk));
 
 ReactDOM.render(
-  <React.StrictMode>
+  <Provider store={store}>
     <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  </Provider>,
+  document.getElementById("root")
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
